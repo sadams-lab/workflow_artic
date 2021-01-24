@@ -1,36 +1,45 @@
-version 1.0
-
 task ArticMinion {
 
     input {
         String run_name
-        String barcode
-        Array[File] fastq_files
+        File fastq_file
+        File sequencing_summary
         Array[File] fast5_files
 
         Int threads
         String ram
     }
 
-    Int disk_size = ceil(size(fastq_files[0], "GB")) * length(fastq_files) + 10
+    Int disk_size = ceil(size(fastq_file, "GB")) * 5 + 10
 
-	command {
-        mkdir ~{sample_name}
+	command <<<
+        source activate artic-ncov2019
+        
+        mkdir fast5
 
-        for f in ~{sep = ' ' fastq_files} 
+        for f in ~{sep = ' ' fast5_files} ; 
         do
-            mv $f ~{sample_name}/
+            mv $f fast5/
         done
 
-        artic guppyplex \
-            --min-length 400 \
-            --max-length 700 \
-            --directory ~{sample_name} \
-            --prefix ~{run_name}
-    }
+        BARCODE=~{fastq_file}
+        BARCODE=${BARCODE%.fastq}
+        BARCODE=${BARCODE##*/}
+
+        artic minion \
+            --normalise 200 \
+            --threads ~{threads} \
+            --scheme-directory /artic-ncov2019/primer_schemes \
+            --read-file ~{fastq_file} \
+            --fast5-directory fast5 \
+            --sequencing-summary ~{sequencing_summary} \
+            nCoV-2019/V3 \
+            $BARCODE
+    >>>
 
     output {
-        File fastq_filtered = "~{run_name}_~{sample_name}.fastq"
+
+        Array[File] outputs = glob("barcode*") # - BAM file for visualisation after primer-binding site trimming
     }
 
     runtime {
