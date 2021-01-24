@@ -6,7 +6,6 @@ workflow ArticWorkflow {
 
     input {
         String run_name
-        String batch_directory
         File fast5_file_list
 
         Array[String] barcodes = ["barcode01", "barcode02", "barcode03", "barcode04", 
