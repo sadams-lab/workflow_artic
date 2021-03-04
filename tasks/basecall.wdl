@@ -31,6 +31,7 @@ task Basecall {
             -x auto
 
         guppy_barcoder \
+            --require_barcodes_both_ends \
             -s fastq_demux \
             --arrangements_files "barcode_arrs_nb12.cfg" \
             -i fastq

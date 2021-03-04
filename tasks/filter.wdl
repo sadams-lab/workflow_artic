@@ -23,8 +23,8 @@ task Filter {
         BARCODE=${BARCODE##*/}
         
         artic guppyplex \
-            --min-length 200 \
-            --max-length 800 \
+            --min-length 300 \
+            --max-length 700 \
             --directory fastq/$BARCODE \
             --prefix ~{run_name}
         

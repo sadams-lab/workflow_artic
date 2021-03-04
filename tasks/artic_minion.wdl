@@ -27,7 +27,7 @@ task ArticMinion {
         BARCODE=${BARCODE##*/}
 
         artic minion \
-            --normalise 0 \
+            --normalise 200 \
             --threads ~{threads} \
             --scheme-directory /artic-ncov2019/primer_schemes \
             --read-file ~{fastq_file} \
