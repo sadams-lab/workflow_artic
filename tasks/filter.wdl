@@ -1,7 +1,7 @@
 task Filter {
 
     input {
-        String run_name
+        String sample_id
         File barcode_fastq
 
         Int threads
@@ -26,7 +26,7 @@ task Filter {
             --min-length 300 \
             --max-length 700 \
             --directory fastq/$BARCODE \
-            --prefix ~{run_name}
+            --prefix ~{sample_id}
         
         mv *.fastq $BARCODE.filtered.fastq
     >>>

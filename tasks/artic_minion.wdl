@@ -1,7 +1,8 @@
 task ArticMinion {
 
     input {
-        String run_name
+        String sample_id
+
         File fastq_file
         File sequencing_summary
         Array[File] fast5_files
@@ -34,12 +35,15 @@ task ArticMinion {
             --fast5-directory fast5 \
             --sequencing-summary ~{sequencing_summary} \
             nCoV-2019/V3 \
-            $BARCODE
+            ~{sample_id}
+        
+        mkdir results
+        mv ~{sample_id}* results/
     >>>
 
     output {
 
-        Array[File] outputs = glob("barcode*") # - BAM file for visualisation after primer-binding site trimming
+        Array[File] outputs = glob("results/*")
     }
 
     runtime {

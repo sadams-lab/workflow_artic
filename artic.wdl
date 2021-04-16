@@ -5,12 +5,20 @@ version 1.0
 workflow ArticWorkflow {
 
     input {
-        String run_name
+
+        String batch_id
         File fast5_file_list
 
+        Array[String] sample_ids
         Array[String] barcodes = ["barcode01", "barcode02", "barcode03", "barcode04", 
                                   "barcode05", "barcode06", "barcode07", "barcode08",
                                   "barcode09", "barcode10", "barcode11", "barcode12"]
+        
+        File gsutil_key
+
+        String output_bucket
+
+        Int base_threads = 2
 
         Int guppy_threads = 2
         Int guppy_gpus = 1
@@ -18,6 +26,9 @@ workflow ArticWorkflow {
 
         Int artic_threads = 4
         String artic_ram = "16 GB"
+
+        String reorg_docker = "gcr.io/google.com/cloudsdktool/cloud-sdk"
+
     }
 
     Array[File] fast5_files = read_lines(fast5_file_list)
@@ -29,22 +40,23 @@ workflow ArticWorkflow {
             threads = guppy_threads, 
             gpus = guppy_gpus,
             ram = guppy_ram,
-            run_name = run_name
     }
 
-    scatter (barcode_fastq in bc.barcode_fastqs) {
+    Array[Pair[File, String]] barcode_ids = zip(bc.barcode_fastqs, sample_ids)
+
+    scatter (bc_id in barcode_ids) {
 
         call Filter as f {
             input : 
-                run_name = run_name,
-                barcode_fastq = barcode_fastq,
+                sample_id = bc_id.right,
+                barcode_fastq = bc_id.left,
                 threads = artic_threads,
                 ram = artic_ram
         }
 
         call ArticMinion {
             input : 
-                run_name = run_name,
+                sample_id = bc_id.right,
                 fastq_file = f.fastq_filtered,
                 fast5_files = fast5_files,
                 sequencing_summary = bc.sequencing_summary,
@@ -53,7 +65,16 @@ workflow ArticWorkflow {
         }
     }
 
+    call BatchReorg {
+        input : 
+            artic_outputs = ArticMinion.outputs,
+            output_bucket = output_bucket,
+            gsutil_key = gsutil_key,
+            batch_id = batch_id,
+            docker_container = reorg_docker,
+            threads = base_threads
+    }
+
     output {
-        Array[Array[File]] all_outputs = ArticMinion.outputs
     }
 }

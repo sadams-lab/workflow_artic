@@ -1,6 +1,6 @@
 SHELL := /bin/bash
-CROMWELL=path/to/cromwell*.jar
-WOMTOOL=path/to/womtool*.jar
+CROMWELL=~/Documents/dev/enterprise/ariel_workflows/cromwell/cromwell*.jar
+WOMTOOL=~/Documents/dev/enterprise/ariel_workflows/cromwell/womtool*.jar
 
 clean:clean-build
 

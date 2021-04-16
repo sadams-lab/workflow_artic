@@ -2,7 +2,6 @@ task Basecall {
     
     input {
         Array[File] fast5_files
-        String run_name
         Array[String] keep_barcodes
 
         Int threads
@@ -43,6 +42,7 @@ task Basecall {
     >>>
 
     output {
+        Array[File] fastq_files = glob("fastq/*.gz")
         Array[File] barcode_fastqs = glob("fastq_demux/*.tar.gz")
         File sequencing_summary = "fastq/sequencing_summary.txt"
     }
