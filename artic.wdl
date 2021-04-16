@@ -67,6 +67,7 @@ workflow ArticWorkflow {
 
     call BatchReorg {
         input : 
+            fastq_files = bc.fastq_files,
             artic_outputs = ArticMinion.outputs,
             output_bucket = output_bucket,
             gsutil_key = gsutil_key,
