@@ -7,6 +7,8 @@ task ArticMinion {
         File sequencing_summary
         Array[File] fast5_files
 
+        String artic_minion_options
+
         Int threads
         String ram
     }
@@ -34,6 +36,7 @@ task ArticMinion {
             --read-file ~{fastq_file} \
             --fast5-directory fast5 \
             --sequencing-summary ~{sequencing_summary} \
+            ~{artic_minion_options} \
             nCoV-2019/V3 \
             ~{sample_id}
         

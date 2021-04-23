@@ -16,6 +16,8 @@ workflow ArticWorkflow {
         
         File gsutil_key
 
+        String artic_minion_options = ""
+
         String output_bucket
 
         Int base_threads = 2
@@ -57,6 +59,7 @@ workflow ArticWorkflow {
         call ArticMinion {
             input : 
                 sample_id = bc_id.right,
+                artic_minion_options = artic_minion_options,
                 fastq_file = f.fastq_filtered,
                 fast5_files = fast5_files,
                 sequencing_summary = bc.sequencing_summary,
